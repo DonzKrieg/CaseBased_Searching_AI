@@ -7,9 +7,9 @@ TOTAL_GEN = GEN_LENGTH * 2
 X_MIN = -10
 X_MAX = 10
 MAX_GEN = 2
-PC = 0.8 
-PM = 0.01  
-TOURNAMENT_SIZE = 2 
+PC = 0.8
+PM = 0.01
+TOURNAMENT_SIZE = 2
 
 def binary_to_real(binary_str, min_val, max_val):
     decimal = int(binary_str, 2)
@@ -49,6 +49,11 @@ def crossover(parent1, parent2):
         point = random.randint(1, TOTAL_GEN - 1)
         child1 = parent1[:point] + parent2[point:]
         child2 = parent2[:point] + parent1[point:]
+        print(f"Crossover at {point}:")
+        print(f"  Parent1: {parent1}")
+        print(f"  Parent2: {parent2}")
+        print(f"  Child1 : {child1}")
+        print(f"  Child2 : {child2}")
         return child1, child2
     return parent1, parent2
 
@@ -67,29 +72,37 @@ def genetic_algorithm():
     best_fit = float('inf')
 
     for generation in range(MAX_GEN):
+        print(f"\n=== Generasi {generation + 1} ===")
         fitnesses = evaluate_population(population)
-        
+        for i, chrom in enumerate(population):
+            x1, x2 = decode_chromosome(chrom)
+            print(f"{i+1}. Kromosom: {chrom}, x1: {x1:.2f}, x2: {x2:.2f}, fitness: {fitnesses[i]:.4f}")
+
         min_fit_idx = fitnesses.index(min(fitnesses))
         if fitnesses[min_fit_idx] < best_fit:
             best_fit = fitnesses[min_fit_idx]
             best_chrom = population[min_fit_idx]
 
-        new_population = [best_chrom]  
+        print("Elit dipertahankan:", best_chrom)
+        new_population = [best_chrom]
 
         while len(new_population) < POP_SIZE:
             parent1 = tournament_selection(population, fitnesses)
             parent2 = tournament_selection(population, fitnesses)
             child1, child2 = crossover(parent1, parent2)
-            new_population.extend([mutate(child1), mutate(child2)])
+            child1 = mutate(child1)
+            child2 = mutate(child2)
+            new_population.extend([child1, child2])
 
-        population = new_population[:POP_SIZE] 
+        population = new_population[:POP_SIZE]
 
     x1, x2 = decode_chromosome(best_chrom)
     return best_chrom, x1, x2, best_fit
 
 best_chromosome, x1, x2, f_val = genetic_algorithm()
 
-print("Kromosom Terbaik:", best_chromosome)
-print("x1 =", x1)
-print("x2 =", x2)
-print("Nilai Fungsi Minimum =", f_val)
+print("\n=== Hasil Akhir ===")
+print("Kromosom terbaik:", best_chromosome)
+print("x1 =", round(x1, 4))
+print("x2 =", round(x2, 4))
+print("Fitness =", round(f_val, 4))
