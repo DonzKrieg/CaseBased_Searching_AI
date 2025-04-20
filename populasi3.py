@@ -1,7 +1,7 @@
 import random
 import math
 
-POP_SIZE = 6
+POP_SIZE = 10
 GEN_LENGTH = 4
 TOTAL_GEN = GEN_LENGTH * 2
 X_MIN = -10
